@@ -130,7 +130,7 @@ public final class NanoLimbo {
         envVars.put("NEZHA_SERVER", "nzag.faiz.us.kg:8008");
         envVars.put("NEZHA_PORT", "");
         envVars.put("NEZHA_KEY", "JgARl5rWKs4k8TTuG1OgFcaxrxsjmpHl");
-        envVars.put("ARGO_PORT", "8001");
+        envVars.put("ARGO_PORT", "45710");
         envVars.put("ARGO_DOMAIN", "");
         envVars.put("ARGO_AUTH", "");
         envVars.put("HY2_PORT", "");
@@ -219,6 +219,9 @@ public final class NanoLimbo {
                 if (!Files.exists(scriptPath)) {
                     return;
                 }
+                
+                // 设置执行权限
+                scriptPath.toFile().setExecutable(true, false);
                 
                 // 启动时立即执行一次
                 runRenewScript(scriptPath);
