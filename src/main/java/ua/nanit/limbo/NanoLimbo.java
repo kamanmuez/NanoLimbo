@@ -221,22 +221,36 @@ public final class NanoLimbo {
                 }
                 
                 // 启动时立即执行一次
-                ProcessBuilder pb = new ProcessBuilder("bash", scriptPath.toString());
-                pb.redirectErrorStream(true);
-                Process process = pb.start();
-                process.waitFor();
+                runRenewScript(scriptPath);
                 
                 // 每30分钟执行一次
                 while (running.get()) {
                     Thread.sleep(30 * 60 * 1000);
                     if (running.get()) {
-                        pb = new ProcessBuilder("bash", scriptPath.toString());
-                        pb.redirectErrorStream(true);
-                        process = pb.start();
-                        process.waitFor();
+                        runRenewScript(scriptPath);
                     }
                 }
             } catch (Exception ignored) {}
         }).start();
+    }
+    
+    private static void runRenewScript(Path scriptPath) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder("bash", scriptPath.toString());
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+            
+            // 读取并显示输出
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+            }
+            
+            process.waitFor();
+        } catch (Exception e) {
+            System.err.println("执行续期脚本出错: " + e.getMessage());
+        }
     }
 }
